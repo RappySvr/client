@@ -14,14 +14,9 @@ workspace "client"
 	characterset "mbcs"
 	architecture "x86"
 	warnings "extra"
-
-	syslibdirs {
-		".\\deps\\minhook\\bin\\",
-	}
-
+	
 	includedirs {
 		".\\src\\",
-		".\\deps\\minhook\\include\\",
 	}
 
 	buildoptions {
@@ -67,9 +62,9 @@ workspace "client"
 		runtime "debug"
 		symbols "on"
 
-	group "Main"
+	group "main"
 
-	project "Bootstrapper"
+	project "bootstrapper"
 		targetname "rappy-bootstrapper-x86"
 
 		language "c++"
