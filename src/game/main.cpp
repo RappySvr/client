@@ -48,7 +48,7 @@ namespace rl
 	void init()
 	{
 		patches::init();
-		load_settings_ = utils::hook::detour(0x00482EAC, load_settings, 5);
+		//load_settings_ = utils::hook::detour(0x00482EAC, load_settings, 5);
 		window::init();
 	}
 }
