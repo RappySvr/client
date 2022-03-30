@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <initializer_list>
 #include <string>
+#include <vector	>
 
 namespace utils
 {
@@ -161,5 +162,7 @@ namespace utils
 
 			return utils::function<T>(reinterpret_cast<T*>(address));
 		}
+
+		std::uint8_t* pattern(void* module, const char* signature);
 	}
 }

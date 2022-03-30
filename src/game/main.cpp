@@ -1,63 +1,57 @@
-#include <loader/loader.hpp>
-
-#include "patches/patches.hpp"
-
-#include <utils/exception/exception.hpp>
-#include <utils/hook/hook.hpp>
-#include <utils/console/console.hpp>
+#include "loader/loader.hpp"
 
 #include "window/window.hpp"
 
-namespace rl
+#include <utils/hook/hook.hpp>
+#include <utils/console/console.hpp>
+#include <utils/exception/exception.hpp>
+
+void __declspec(naked) start()
 {
-	static utils::function<void __cdecl()> load_settings_;
-	void __cdecl load_settings()
+	//Not really sure how the start is with this unpacked exe
+	__asm
 	{
-		//Resolution
-        utils::hook::set<std::int16_t>(0x00A46C48, 1280);
-        utils::hook::set<std::int16_t>(0x00A46C4A, 720);
-
-		//BPP
-        utils::hook::set<std::int16_t>(0x00A46C4C, 32);
-
-		utils::hook::set<WORD>(0x00A46C4E, 2);
-
-		utils::hook::set<DWORD>(0x00A46C6E, 1);
-		
-		utils::hook::set<WORD>(0x00A46C60, 2);
-		utils::hook::set<WORD>(0x00A46C66, 2);
-		utils::hook::set<WORD>(0x00A46C6A, 2);
-
-		utils::hook::set<WORD>(0x00A46C50, 0);
-
-		//Vsync
-		utils::hook::set<WORD>(0x00A46C54, 0);
-		utils::hook::set<DWORD>(0x00A46C5A, 0);
-
-		utils::hook::set<DWORD>(0x00A46C56, 0);
-		utils::hook::set<WORD>(0x00A46C5E, 0);
-		utils::hook::set<WORD>(0x00A46C62, 0);
-		utils::hook::set<WORD>(0x00A46C64, 0);
-		utils::hook::set<WORD>(0x00A46C68, 0);
-		utils::hook::set<WORD>(0x00A46C6C, 2);
-
-		//Window mode
-		utils::hook::set<int>(0x00A46C72, 1);
+		mov ebx, 227h
+		push	0x00B60073;
+		retn;
 	}
+}
 
-	void init()
-	{
-		patches::init();
-		//load_settings_ = utils::hook::detour(0x00482EAC, load_settings, 5);
-		window::init();
-	}
+void replace_funcs()
+{
+	utils::hook::jump(0x00B60000, start);
+
+	replace_func(0x004829E0, (uint32_t)window::get_resolution_x);
+	replace_func(0x004829E8, (uint32_t)window::get_resolution_y);
+	replace_func(0x004829F0, (uint32_t)window::get_bpp);
+	replace_func(0x00482AA0, (uint32_t)window::get_window_mode);
+}
+
+void patches()
+{
+	utils::hook::set(0x007085E5 + 0x1, IP_ADDR);
+	utils::hook::set(0x00708618 + 0x1, IP_ADDR);
+	utils::hook::set(0x007085EB + 0x1, IP_ADDR);
+	utils::hook::set(0x007082F1 + 0x1, IP_ADDR);
+	utils::hook::set(0x0070833C + 0x1, IP_ADDR);
+	utils::hook::set(0x007082F7 + 0x1, IP_ADDR);
+	utils::hook::set(0x007085FD + 0x1, IP_ADDR);
+	utils::hook::set(0x0070861E + 0x1, IP_ADDR);
+	utils::hook::set(0x00708321 + 0x1, IP_ADDR);
+	utils::hook::set(0x00708342 + 0x1, IP_ADDR);
+
+	char* song_name = "Valentine.adx";
+	utils::hook::set(0x006F82F0 + 0x1, song_name);
+
+	window::widescreen(1280.0f, 720.0f);
 }
 
 int __cdecl main(int argc, char* argv[])
 {
-	utils::console::init();
 	utils::exception::init("client");
+	utils::console::init();
 	load("psobb.exe");
-	rl::init();
+	patches();
+	replace_funcs();
 	return entry_point(0x00B60000);
 }

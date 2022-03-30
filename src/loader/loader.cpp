@@ -1,16 +1,5 @@
 #include "loader.hpp"
 
-template <typename T> inline std::function<T> call(std::uintptr_t callback)
-{
-    return std::function<T>(reinterpret_cast<T*>(callback));
-}
-
-inline auto replace(std::uint32_t address, std::uint32_t function) -> void
-{
-    *reinterpret_cast<std::uint8_t*>(address) = 0xE9;
-    *reinterpret_cast<std::uint32_t*>(address + 1) = (function - address - 5);
-}
-
 #pragma comment(linker, "/base:0x400000")
 #pragma comment(linker, "/merge:.data=.cld")
 #pragma comment(linker, "/merge:.rdata=.clr")
@@ -127,7 +116,7 @@ auto load_imports(const HMODULE target, const HMODULE source) -> void
     }
 }
 
-void load_(const char* bin_name)
+void load(const char* bin_name)
 {
     std::ifstream bin(bin_name, std::ifstream::binary);
 
@@ -164,27 +153,12 @@ void load_(const char* bin_name)
     std::memmove(module_nt_headers, source_nt_headers, sizeof(IMAGE_NT_HEADERS) + (module_nt_headers->FileHeader.NumberOfSections * (sizeof(IMAGE_SECTION_HEADER))));
 }
 
-int entry_point_(uint32_t address)
+int entry_point(uint32_t address)
 {
     return call<int()>(address)();
 }
 
-void replace_func_(uint32_t address, uint32_t function)
-{
-    replace(address, function);
-}
-
-void load(const char* bin_name)
-{
-    load_(bin_name);
-}
-
-int entry_point(uint32_t address)
-{
-    return entry_point_(address);
-}
-
 void replace_func(uint32_t address, uint32_t function)
 {
-    replace_func_(address, function);
+    replace(address, function);
 }

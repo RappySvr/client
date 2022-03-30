@@ -1,3 +1,5 @@
+require "lua"
+
 workspace "client"
 	location ".\\build\\"
 
@@ -50,26 +52,32 @@ workspace "client"
 		"Debug",
 	}
 	
-	configuration "Release"
+	prebuildcommands {
+		"cd ..\\tools\\",
+		"call version.bat",
+	}
+	
+	filter "Release"
 		defines "NDEBUG"
 		optimize "full"
 		runtime "release"
 		symbols "off"
+	filter ""
 
-	configuration "Debug"
+	filter "Debug"
 		defines "DEBUG"
 		optimize "debug"
 		runtime "debug"
 		symbols "on"
+	filter ""
 
 	group "main"
 
 	project "bootstrapper"
 		targetname "rappy-bootstrapper-x86"
-
 		language "c++"
 		kind "consoleapp"
-		warnings "off"
+		warnings "off"	
 
 		pchheader "stdafx.hpp"
 		pchsource "src/game/stdafx.cpp"
