@@ -82,6 +82,10 @@ workspace "client"
 		pchheader "stdafx.hpp"
 		pchsource "src/game/stdafx.cpp"
 		forceincludes "stdafx.hpp"
+	
+		postbuildcommands {
+			"copy /y \"$(TargetPath)\" \"C:\\Games\\RappyBB\\\"",
+		}
 
 		links {
 			"DbgHelp",

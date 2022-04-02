@@ -5,6 +5,7 @@ class window
 public:
 	static float resolution_x;
 	static float resolution_y;
+	static float ratio;
 	static int get_resolution_x();
 	static int get_resolution_y();
 	static int get_bpp();
