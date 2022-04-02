@@ -4,9 +4,13 @@
 #include <utils/pattern/pattern.hpp>
 #include <utils/console/console.hpp>
 
+const float _4_3 = 4.0f/3.0f;
+const float _16_9 = 16.0f / 9.0f;
+const float _16_10 = 16.0f/10.0f;
+
 float window::resolution_x = 640.0f;
 float window::resolution_y = 480.0f;
-float window::ratio = 1.3333f;
+float window::ratio = _4_3;
 
 //DONE : 0x004829E0
 int window::get_resolution_x()
@@ -70,17 +74,54 @@ void window::widescreen(float res_x, float res_y)
 	auto pattern_unk_0 = hook::pattern("00 00 E1 43");
 	pattern_unk_0.for_each_result([](hook::pattern_match i)
 	{
-		*(float*)(i.get<std::uint32_t>()) = 770.0f;
+		float number = 450.0f;
+		if (window::ratio == _16_9 || window::ratio == _16_10)
+		{
+			number = 770.0f;
+		}
+
+		*(float*)(i.get<std::uint32_t>()) = number;
 	});
 
 	auto pattern_unk_1 = hook::pattern("00 00 C8 42");
 	pattern_unk_0.for_each_result([](hook::pattern_match i)
 	{
-		*(float*)(i.get<std::uint32_t>()) = 220.0f;
+		float number = 100.0f;
+		if (window::ratio == _16_9)
+		{
+			number = 220.0f;
+		}
+		else if(window::ratio == _16_10)
+		{
+			number = 260.0f;
+		}
+
+		*(float*)(i.get<std::uint32_t>()) = number;
+	});
+
+	auto pattern_height_minus_170 = hook::pattern("00 00 9B 43");
+	pattern_height_minus_170.for_each_result([](hook::pattern_match i)
+	{
+		*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 170.0f;
+	});
+
+	auto pattern_height_minus_190 = hook::pattern("00 00 91 43");
+	pattern_height_minus_190.for_each_result([](hook::pattern_match i)
+	{
+		*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 190.0f;
+	});
+
+	auto pattern_height_minus_50 = hook::pattern("00 00 D7 43");
+	pattern_height_minus_50.for_each_result([](hook::pattern_match i)
+	{
+		*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 50.0f;
 	});
 
 	pattern_x.clear();
 	pattern_y.clear();
 	pattern_r.clear();
 	pattern_unk_0.clear();
+	pattern_height_minus_170.clear();
+	pattern_height_minus_190.clear();
+	pattern_height_minus_50.clear();
 }
