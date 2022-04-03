@@ -1,6 +1,9 @@
 #include "loader/loader.hpp"
 
 #include "window/window.hpp"
+#include "winapi/winapi.hpp"
+#include "audio/audio.hpp"
+#include "menus/menus.hpp"
 
 #include <utils/hook/hook.hpp>
 #include <utils/console/console.hpp>
@@ -42,8 +45,14 @@ void patches()
 
 	char* song_name = "Valentine.adx";
 	utils::hook::set(0x006F82F0 + 0x1, song_name);
+}
 
-	window::widescreen(1280.0f, 720.0f);
+void client_init()
+{
+	window::widescreen(640.0f * 2, 480.0f * 2);
+	winapi::init();
+	audio::init();
+	menus::init();
 }
 
 int __cdecl main(int argc, char* argv[])
@@ -53,5 +62,6 @@ int __cdecl main(int argc, char* argv[])
 	load("psobb.exe");
 	patches();
 	replace_funcs();
+	client_init();
 	return entry_point(0x00B60000);
 }
