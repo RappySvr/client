@@ -17,6 +17,9 @@
 	#define PRINT_DEBUG(__FMT__, ...)													\
 		PRINT_FILE_CONSOLE("[ DEBUG ][" __FUNCTION__ "]: " __FMT__ "\n", __VA_ARGS__)
 
+	#define PRINT_DEBUG_N(__FMT__, ...)													\
+		PRINT_FILE_CONSOLE("[ DEBUG ]: " __FMT__ "\n", __VA_ARGS__)
+
 	#define PRINT_INFO(__FMT__, ...)													\
 		PRINT_FILE_CONSOLE("[ INFO ][" __FUNCTION__ "]: " __FMT__ "\n", __VA_ARGS__)
 
