@@ -44,17 +44,42 @@ void window::widescreen(float res_x, float res_y)
 	window::resolution_y = res_y;
 	window::ratio = window::resolution_x / window::resolution_y;
 
+	int num = 0;
+
 	//X
 	auto pattern_x = hook::pattern("00 00 20 44");
-	pattern_x.for_each_result([](hook::pattern_match i)
+	pattern_x.for_each_result([&num](hook::pattern_match i)
 	{
+		if (num != 6 && num != 7)
+		{
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_x);
+			*(float*)(i.get<std::uint32_t>()) = window::resolution_x;
+		}
+		num++;
+	});
+
+	auto pattern_x_1 = hook::pattern("00 C0 1F 44");
+	pattern_x_1.for_each_result([](hook::pattern_match i)
+	{
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_x);
 		*(float*)(i.get<std::uint32_t>()) = window::resolution_x;
 	});
 
 	//Y
+	num = 0;
 	auto pattern_y = hook::pattern("00 00 F0 43");
-	pattern_y.for_each_result([](hook::pattern_match i)
+	pattern_y.for_each_result([&num](hook::pattern_match i)
 	{
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y);
+		*(float*)(i.get<std::uint32_t>()) = window::resolution_y;
+		num++;
+	});
+
+	//Y
+	auto pattern_y_1 = hook::pattern("00 80 EF 43");
+	pattern_y_1.for_each_result([](hook::pattern_match i)
+	{
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y);
 		*(float*)(i.get<std::uint32_t>()) = window::resolution_y;
 	});
 
@@ -62,6 +87,7 @@ void window::widescreen(float res_x, float res_y)
 	auto pattern_r = hook::pattern("AB AA AA 3F");
 	pattern_r.for_each_result([](hook::pattern_match i)
 	{
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::ratio);
 		*(float*)(i.get<std::uint32_t>()) = window::ratio;
 	});
 
@@ -79,7 +105,7 @@ void window::widescreen(float res_x, float res_y)
 		{
 			number = 770.0f;
 		}
-
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), number);
 		*(float*)(i.get<std::uint32_t>()) = number;
 	});
 
@@ -95,33 +121,56 @@ void window::widescreen(float res_x, float res_y)
 		{
 			number = 260.0f;
 		}
-
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), number);
 		*(float*)(i.get<std::uint32_t>()) = number;
 	});
 
 	auto pattern_height_minus_170 = hook::pattern("00 00 9B 43");
 	pattern_height_minus_170.for_each_result([](hook::pattern_match i)
 	{
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y - 170.0f);
 		*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 170.0f;
 	});
 
 	auto pattern_height_minus_190 = hook::pattern("00 00 91 43");
 	pattern_height_minus_190.for_each_result([](hook::pattern_match i)
 	{
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y - 190.0f);
 		*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 190.0f;
 	});
 
+	num = 0;
 	auto pattern_height_minus_50 = hook::pattern("00 00 D7 43");
-	pattern_height_minus_50.for_each_result([](hook::pattern_match i)
+	pattern_height_minus_50.for_each_result([&num](hook::pattern_match i)
 	{
-		*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 50.0f;
+		if (num == 1 || num == 6)
+		{
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y - 50.0f);
+			*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 50.0f;
+		}
+		num++;
+	});
+
+	num = 0;
+	auto pattern_height_minus_149 = hook::pattern("00 80 A5 43");
+	pattern_height_minus_149.for_each_result([&num](hook::pattern_match i)
+	{
+		if(num == 0)
+		{
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y - 149.0f);
+			*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 149.0f;
+		}
+		num++;
 	});
 
 	pattern_x.clear();
+	pattern_x_1.clear();
 	pattern_y.clear();
+	pattern_y_1.clear();
 	pattern_r.clear();
 	pattern_unk_0.clear();
 	pattern_height_minus_170.clear();
 	pattern_height_minus_190.clear();
 	pattern_height_minus_50.clear();
+	pattern_height_minus_149.clear();
 }
