@@ -4,6 +4,7 @@
 #include "winapi/winapi.hpp"
 #include "audio/audio.hpp"
 #include "menus/menus.hpp"
+#include "network/network.hpp"
 
 #include <utils/hook/hook.hpp>
 #include <utils/console/console.hpp>
@@ -43,8 +44,8 @@ void patches()
 	utils::hook::set(0x00708321 + 0x1, IP_ADDR);
 	utils::hook::set(0x00708342 + 0x1, IP_ADDR);
 
-	char* song_name = "Valentine.adx";
-	utils::hook::set(0x006F82F0 + 0x1, song_name);
+	event::update_song();
+	utils::hook::set(0x006F82F0 + 0x1, &event::song_name[0]);
 
 	//Teker Result fix
 	utils::hook::write(0x006D9F7B, { 0x68, 0x44, 0xC4, 0x96, 0x00 });
@@ -52,14 +53,14 @@ void patches()
 	//After:	push    offset unk_96C444
 
 	//Image board patch
-	utils::hook::write(0x006713A9, { 0x0, 0x8C, 0x23, 0x01, 0x00, 0x00 });
+	//utils::hook::write(0x006713A9, { 0x0, 0x8C, 0x23, 0x01, 0x00, 0x00 });
 	//Before:	jle     loc_6714D2
 	//After:	jl		loc_6714D2
 }
 
 void client_init()
 {
-	window::widescreen(640.0f * 2, 480.0f * 2);
+	window::widescreen(1280.0f, 720.0f);
 	winapi::init();
 	audio::init();
 	menus::init();

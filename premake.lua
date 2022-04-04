@@ -84,7 +84,7 @@ workspace "client"
 		forceincludes "stdafx.hpp"
 	
 		postbuildcommands {
-			"copy /y \"$(TargetPath)\" \"C:\\Games\\RappyBB\\\"",
+			"copy /y \"$(TargetPath)\" \"C:\\Games\\RappyLive\\\"",
 		}
 
 		links {
@@ -97,6 +97,8 @@ workspace "client"
 
 		includedirs {
 			".\\src\\",
+			".\\deps\\cpp-httplib\\",
+			".\\deps\\ThemidaSDK\\include\\",
 		}
 
 		linkoptions {

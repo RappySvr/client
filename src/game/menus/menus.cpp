@@ -1,4 +1,5 @@
 #include "menus.hpp"
+#include "../network/network.hpp"
 #include "game/version.hpp"
 #include "intrin.h"
 
@@ -18,6 +19,10 @@ void __cdecl text_to_screen(float pos_x, float pos_y, float a3, int a4, wchar_t*
 		text = ver_buf;
 		menus::news();
 	}
+	else if (news::states::once)
+	{
+		news::states::once = false;
+	}
 
 	text_to_screen_(pos_x, pos_y, a3, a4, text);
 }
@@ -29,8 +34,14 @@ float menus::text_size(wchar_t* text)
 
 void menus::news()
 {
-	wchar_t* message = L"Welcome to Rappy.Live!";
-	text_to_screen(10.0f, 10.0f, 0.0f, -1, message);
+	if (!news::states::once)
+	{
+		news::update_news();
+		news::states::once = true;
+		PRINT_INFO("A");
+	}
+
+	text_to_screen_(10.0f, 10.0f, 0.0f, -1, utils::format::c_to_w(&news::news_text[0]));
 }
 
 void menus::init()

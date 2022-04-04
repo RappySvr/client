@@ -15,6 +15,15 @@ namespace utils
 		return std::string(result);
 	}
 
+	wchar_t* format::c_to_w(const char* in)
+	{
+		const size_t size = strlen(in) + 1;
+		wchar_t* out = new wchar_t[size];
+		mbstowcs(out, in, size);
+
+		return out;
+	}
+
 	std::string format::replace(const std::string& orig, const std::string& fnd, const std::string& repl)
 	{
 		std::string ret = orig;

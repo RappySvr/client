@@ -13,6 +13,7 @@ namespace utils
 			static std::string va(const char* fmt, ...);
 			static std::string replace(const std::string& orig, const std::string& fnd, const std::string& repl);
 			static auto hash_string(const std::string& string) -> std::uint32_t;
+			static wchar_t* c_to_w(const char* in);
 
 			static auto split(std::string string, const std::string& delimiter) -> std::vector<std::string>;
 
