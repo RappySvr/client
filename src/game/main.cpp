@@ -45,6 +45,16 @@ void patches()
 
 	char* song_name = "Valentine.adx";
 	utils::hook::set(0x006F82F0 + 0x1, song_name);
+
+	//Teker Result fix
+	utils::hook::write(0x006D9F7B, { 0x68, 0x44, 0xC4, 0x96, 0x00 });
+	//Before:	push    offset unk_96C438
+	//After:	push    offset unk_96C444
+
+	//Image board patch
+	utils::hook::write(0x006713A9, { 0x0, 0x8C, 0x23, 0x01, 0x00, 0x00 });
+	//Before:	jle     loc_6714D2
+	//After:	jl		loc_6714D2
 }
 
 void client_init()
