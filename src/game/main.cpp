@@ -53,7 +53,7 @@ void patches()
 	//After:	push    offset unk_96C444
 
 	//Image board patch
-	//utils::hook::write(0x006713A9, { 0x0, 0x8C, 0x23, 0x01, 0x00, 0x00 });
+	utils::hook::write(0x006713A9, { 0x0F, 0x8C, 0x23, 0x01, 0x00, 0x00 });
 	//Before:	jle     loc_6714D2
 	//After:	jl		loc_6714D2
 }
