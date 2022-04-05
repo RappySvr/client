@@ -1,5 +1,6 @@
 #include "menus.hpp"
 #include "../network/network.hpp"
+#include "../audio/audio.hpp"
 #include "game/version.hpp"
 #include "intrin.h"
 
@@ -29,7 +30,7 @@ void __cdecl text_to_screen(float pos_x, float pos_y, float a3, int a4, wchar_t*
 
 float menus::text_size(wchar_t* text)
 {
-	return (lstrlenW(text) * 15.0f);
+	return (lstrlenW(text) * 10.0f);
 }
 
 void menus::news()
@@ -37,14 +38,28 @@ void menus::news()
 	if (!news::states::once)
 	{
 		news::update_news();
+
+		if (news::news_text.length() != 0 && menus::news_pos_x == 0)
+		{
+			menus::news_pos_x = 645.0f;
+		}
+
 		news::states::once = true;
-		PRINT_INFO("A");
 	}
 
-	text_to_screen_(10.0f, 10.0f, 0.0f, -1, utils::format::c_to_w(&news::news_text[0]));
+	text_to_screen_(menus::news_pos_x, 10.0f, 0.0f, -1, utils::format::c_to_w(&news::news_text[0]));
+	menus::news_pos_x--;
+
+	if (menus::news_pos_x <= -menus::text_size(utils::format::c_to_w(&news::news_text[0])))
+	{
+		menus::news_pos_x = 645.0f;
+	}
 }
 
 void menus::init()
 {
 	text_to_screen_ = utils::hook::detour(0x00789248, text_to_screen, 8);
 }
+
+float menus::news_pos_x = 0;
+float menus::news_reset_pos_x = 0;
