@@ -41,7 +41,6 @@ HANDLE __stdcall create_file_a(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD d
 
 BOOL __stdcall create_directory_a(LPCSTR lpPathName, LPSECURITY_ATTRIBUTES lpSecurityAttributes)
 {
-	PRINT_INFO("%s", lpPathName);
 	bool good = true;
 
 	std::string temp(lpPathName);

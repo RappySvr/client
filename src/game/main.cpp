@@ -84,6 +84,8 @@ int __cdecl main(int argc, char* argv[])
 
 #ifdef DEBUG
 	utils::console::init();
+#else
+	ShowWindow(GetConsoleWindow(), HIDE_WINDOW);
 #endif
 
 	load("psobb.exe");
