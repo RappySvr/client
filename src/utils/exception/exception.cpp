@@ -1,3 +1,4 @@
+#include "../../game/stdafx.hpp"
 #include "exception.hpp"
 
 #include <utils/hook/hook.hpp>
@@ -33,8 +34,8 @@ namespace utils
 	{
 		if (!::IsDebuggerPresent())
 		{
-			const auto handle = ::CreateFileA(&utils::format::va("%s\\log\\%s-%u-%llu.dmp",
-				__argv[2], exception::dump_prefix_, 0, std::time(nullptr))[0], GENERIC_READ | GENERIC_WRITE,
+			const auto handle = ::CreateFileA(&utils::format::va("log\\%s-%u-%llu.dmp",
+				exception::dump_prefix_, VERSION, std::time(nullptr))[0], GENERIC_READ | GENERIC_WRITE,
 				FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 			auto info = ::MINIDUMP_EXCEPTION_INFORMATION{ ::GetCurrentThreadId(), ex, false };
