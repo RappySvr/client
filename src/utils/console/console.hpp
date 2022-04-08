@@ -30,6 +30,7 @@
 		PRINT_FILE_CONSOLE("[ ERROR ][" __FUNCTION__ "]: " __FMT__ "\n", __VA_ARGS__)
 #else
 	#define PRINT_DEBUG(__FMT__, ...)
+	#define PRINT_DEBUG_N(__FMT__, ...)
 
 	#define PRINT_INFO(__FMT__, ...)													\
 		PRINT_FILE_CONSOLE("[ INFO ]: " __FMT__ "\n", __VA_ARGS__)
