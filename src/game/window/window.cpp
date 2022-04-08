@@ -44,6 +44,21 @@ void window::widescreen(float res_x, float res_y)
 	window::resolution_y = res_y;
 	window::ratio = window::resolution_x / window::resolution_y;
 
+	if (window::ratio == _16_9)
+	{
+		utils::hook::set(0x0070F757 + 0x3, 0.75f);
+		utils::hook::set(0x0071093C + 0x3, 0.75f);
+		utils::hook::set(0x0071B752 + 0x3, 0.75f);
+		utils::hook::set(0x00725DDA + 0x6, 0.75f);
+		utils::hook::set(0x00728B40 + 0x3, 0.75f);
+		utils::hook::set(0x00731597 + 0x3, 0.75f);
+		utils::hook::set(0x00731D18 + 0x3, 0.75f);
+		utils::hook::set(0x0073A4A8 + 0x3, 0.75f);
+		utils::hook::set(0x0073EFD8 + 0x3, 0.75f);
+		utils::hook::set(0x007575DB + 0x3, 0.75f);
+		utils::hook::set(0x007104EE + 0x3, 0.45f);
+	}
+
 	int num = 0;
 
 	//X
@@ -174,3 +189,5 @@ void window::widescreen(float res_x, float res_y)
 	pattern_height_minus_50.clear();
 	pattern_height_minus_149.clear();
 }
+
+SDL_Window* window::sdl_window;
