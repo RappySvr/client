@@ -4,4 +4,5 @@ class winapi
 {
 public:
 	static void init();
+	static HWND hwnd;
 };
