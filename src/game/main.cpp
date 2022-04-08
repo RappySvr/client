@@ -81,7 +81,11 @@ void client_init()
 int __cdecl main(int argc, char* argv[])
 {
 	utils::exception::init("client");
+
+#ifdef DEBUG
 	utils::console::init();
+#endif
+
 	load("psobb.exe");
 	patches();
 	replace_funcs();
