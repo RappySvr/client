@@ -39,6 +39,23 @@ HANDLE __stdcall create_file_a(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD d
 	}
 }
 
+BOOL __stdcall create_directory_a(LPCSTR lpPathName, LPSECURITY_ATTRIBUTES lpSecurityAttributes)
+{
+	PRINT_INFO("%s", lpPathName);
+	bool good = true;
+
+	std::string temp(lpPathName);
+	if (temp.find("GameGuard") != std::string::npos)
+	{
+		good = false;
+	}
+
+	if (good)
+	{
+		return CreateDirectoryA(lpPathName, lpSecurityAttributes);
+	}
+}
+
 int __stdcall show_cursor(bool show)
 {
 	return show;
@@ -56,6 +73,7 @@ void winapi::init()
 	utils::hook::set(0x008F8390, create_window_ex_a);
 	utils::hook::set(0x008F8334, show_cursor);
 	utils::hook::set(0x008F8144, create_file_a);
+	utils::hook::set(0x008F8220, create_directory_a);
 
 	utils::hook::detour(0x0083C070, output_debug_string, 7);
 }
