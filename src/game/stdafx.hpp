@@ -10,4 +10,5 @@
 #include "version.hpp"
 
 
-#define IP_ADDR "71.45.142.6"
+#define IP_ADDR "45.85.194.188"
+#define DISABLE_SDL

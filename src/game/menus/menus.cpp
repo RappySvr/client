@@ -20,10 +20,6 @@ void __cdecl menus::text_to_screen(float pos_x, float pos_y, float a3, int a4, w
 		text = ver_buf;
 		menus::news();
 	}
-	else if (news::states::once)
-	{
-		news::states::once = false;
-	}
 
 	text_to_screen_(pos_x, pos_y, a3, a4, text);
 }

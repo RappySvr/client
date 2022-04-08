@@ -88,7 +88,7 @@ void gameplay::init()
 
 	debug_print_screen_ = utils::hook::detour(0x0061CDB0, debug_print_screen, 1);
 
-#ifndef SDL_DISABLE
+#ifndef DISABLE_SDL
 	utils::hook::nop(0x00709E1E, 2);
 	utils::hook::nop(0x00709E20, 6);
 #endif
