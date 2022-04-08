@@ -4,8 +4,8 @@
 #include <utils/console/console.hpp>
 
 
-static utils::function<void __cdecl(const char*)> play_sound_;
-void __cdecl audio::play_sound(const char* name)
+static utils::function<void (const char*)> play_sound_;
+void audio::play_sound(const char* name)
 {
 	return play_sound_(name);
 }

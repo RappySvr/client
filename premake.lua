@@ -78,6 +78,11 @@ workspace "client"
 		language "c++"
 		kind "consoleapp"
 		warnings "off"	
+		
+		nuget {
+			"sdl2.nuget:2.0.20",
+			"sdl2.nuget.redist:2.0.20"
+		}
 
 		pchheader "stdafx.hpp"
 		pchsource "src/game/stdafx.cpp"

@@ -2,6 +2,8 @@
 
 #include "window/window.hpp"
 #include "winapi/winapi.hpp"
+#include "gameplay/gameplay.hpp"
+#include "input/input.hpp"
 #include "audio/audio.hpp"
 #include "menus/menus.hpp"
 #include "network/network.hpp"
@@ -60,8 +62,18 @@ void patches()
 
 void client_init()
 {
+#ifndef DISABLE_SDL
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK) < 0)
+	{
+		MessageBoxA(nullptr, "Failed to init SDL2", "Rappy.Live", 0);
+		exit(0);
+	}
+#endif
+
 	window::widescreen(1280.0f, 720.0f);
 	winapi::init();
+	input::init();
+	gameplay::init();
 	audio::init();
 	menus::init();
 }
