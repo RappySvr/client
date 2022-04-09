@@ -1,5 +1,6 @@
 #include "loader/loader.hpp"
 
+#include "settings/settings.hpp"
 #include "window/window.hpp"
 #include "winapi/winapi.hpp"
 #include "gameplay/gameplay.hpp"
@@ -11,6 +12,7 @@
 #include <utils/hook/hook.hpp>
 #include <utils/console/console.hpp>
 #include <utils/exception/exception.hpp>
+#include <utils/io/io.hpp>
 
 void __declspec(naked) start()
 {
@@ -31,6 +33,7 @@ void replace_funcs()
 	replace_func(0x004829E8, (uint32_t)window::get_resolution_y);
 	replace_func(0x004829F0, (uint32_t)window::get_bpp);
 	replace_func(0x00482AA0, (uint32_t)window::get_window_mode);
+	replace_func(0x00482EAC, (uint32_t)settings::load);
 }
 
 void patches()
@@ -69,8 +72,9 @@ void client_init()
 		exit(0);
 	}
 #endif
-
-	window::widescreen(1280.0f, 720.0f);
+	utils::io::init();
+	settings::init();
+	window::init();
 	winapi::init();
 	input::init();
 	gameplay::init();

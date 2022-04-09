@@ -5,26 +5,24 @@
 #include <utils/pattern/pattern.hpp>
 #include <utils/console/console.hpp>
 
-const float _4_3 = 4.0f/3.0f;
-const float _16_9 = 16.0f / 9.0f;
-const float _16_10 = 16.0f/10.0f;
+const float _4_3 = std::truncf(4.0f/3.0f);
+const float _16_9 = std::truncf(16.0f / 9.0f);
+const float _16_10 = std::truncf(16.0f/10.0f);
 
-float window::resolution_x = 640.0f;
-float window::resolution_y = 480.0f;
 float window::ratio = _4_3;
 
 //DONE : 0x004829E0
 int window::get_resolution_x()
 {
 	//return *(int*)(0x00A46C48);
-	return window::resolution_x;
+	return (int)settings::resolution.x;
 }
 
 //DONE : 0x004829E8
 int window::get_resolution_y()
 {
 	//return *(int*)(0x00A46C4A);
-	return window::resolution_y;
+	return (int)settings::resolution.y;
 }
 
 //DONE : 0x004829F0
@@ -39,12 +37,18 @@ int window::get_window_mode()
 	return *(int*)(0x00A46C72);
 }
 
-void window::widescreen(float res_x, float res_y)
+void window::init()
 {
-	window::resolution_x = res_x;
-	window::resolution_y = res_y;
-	window::ratio = window::resolution_x / window::resolution_y;
+	window::ratio = std::truncf(settings::resolution.x / settings::resolution.y);
 
+	if (window::ratio != _4_3)
+	{
+		window::widescreen();
+	}
+}
+
+void window::widescreen()
+{
 	if (window::ratio == _16_9)
 	{
 		utils::hook::set(0x0070F757 + 0x3, 0.75f);
@@ -68,8 +72,8 @@ void window::widescreen(float res_x, float res_y)
 	{
 		if (num != 6 && num != 7)
 		{
-			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_x);
-			*(float*)(i.get<std::uint32_t>()) = window::resolution_x;
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.x);
+			*(float*)(i.get<std::uint32_t>()) = settings::resolution.x;
 		}
 		num++;
 	});
@@ -77,8 +81,8 @@ void window::widescreen(float res_x, float res_y)
 	auto pattern_x_1 = hook::pattern("00 C0 1F 44");
 	pattern_x_1.for_each_result([](hook::pattern_match i)
 	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_x);
-		*(float*)(i.get<std::uint32_t>()) = window::resolution_x;
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.x);
+		*(float*)(i.get<std::uint32_t>()) = settings::resolution.x;
 	});
 
 	//Y
@@ -86,8 +90,8 @@ void window::widescreen(float res_x, float res_y)
 	auto pattern_y = hook::pattern("00 00 F0 43");
 	pattern_y.for_each_result([&num](hook::pattern_match i)
 	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y);
-		*(float*)(i.get<std::uint32_t>()) = window::resolution_y;
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y);
+		*(float*)(i.get<std::uint32_t>()) = settings::resolution.y;
 		num++;
 	});
 
@@ -95,8 +99,8 @@ void window::widescreen(float res_x, float res_y)
 	auto pattern_y_1 = hook::pattern("00 80 EF 43");
 	pattern_y_1.for_each_result([](hook::pattern_match i)
 	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y);
-		*(float*)(i.get<std::uint32_t>()) = window::resolution_y;
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y);
+		*(float*)(i.get<std::uint32_t>()) = settings::resolution.y;
 	});
 
 	//Ratio
@@ -144,15 +148,15 @@ void window::widescreen(float res_x, float res_y)
 	auto pattern_height_minus_170 = hook::pattern("00 00 9B 43");
 	pattern_height_minus_170.for_each_result([](hook::pattern_match i)
 	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y - 170.0f);
-		*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 170.0f;
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 170.0f);
+		*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 170.0f;
 	});
 
 	auto pattern_height_minus_190 = hook::pattern("00 00 91 43");
 	pattern_height_minus_190.for_each_result([](hook::pattern_match i)
 	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y - 190.0f);
-		*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 190.0f;
+		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 190.0f);
+		*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 190.0f;
 	});
 
 	num = 0;
@@ -161,8 +165,8 @@ void window::widescreen(float res_x, float res_y)
 	{
 		if (num == 1 || num == 6)
 		{
-			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y - 50.0f);
-			*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 50.0f;
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 50.0f);
+			*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 50.0f;
 		}
 		num++;
 	});
@@ -173,8 +177,8 @@ void window::widescreen(float res_x, float res_y)
 	{
 		if(num == 0)
 		{
-			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::resolution_y - 149.0f);
-			*(float*)(i.get<std::uint32_t>()) = window::resolution_y - 149.0f;
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 149.0f);
+			*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 149.0f;
 		}
 		num++;
 	});

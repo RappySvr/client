@@ -68,7 +68,7 @@ void __fastcall sub_4D7698(int ecx, char* edx)
 
 			SDL_ShowCursor(SDL_ENABLE);
 			SDL_SetWindowMouseGrab(window::sdl_window, SDL_FALSE);
-			SDL_WarpMouseInWindow(window::sdl_window, (int)(window::resolution_x / 2), (int)(window::resolution_y / 2));
+			SDL_WarpMouseInWindow(window::sdl_window, (int)(settings::resolution.x / 2), (int)(settings::resolution.y / 2));
 			release_once = true;
 			grab_once = false;
 		}
