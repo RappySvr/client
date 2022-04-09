@@ -1,3 +1,4 @@
+#include "../stdafx.hpp"
 #include "window.hpp"
 
 #include <utils/hook/hook.hpp>
@@ -191,3 +192,4 @@ void window::widescreen(float res_x, float res_y)
 }
 
 SDL_Window* window::sdl_window;
+SDL_Renderer* window::sdl_renderer;

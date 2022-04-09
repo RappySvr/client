@@ -13,4 +13,5 @@ public:
 	static void widescreen(float res_x, float res_y);
 
 	static SDL_Window* sdl_window;
+	static SDL_Renderer* sdl_renderer;
 };
