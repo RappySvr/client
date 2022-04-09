@@ -1,3 +1,4 @@
+#include "../stdafx.hpp"
 #include "input.hpp"
 #include "../window/window.hpp"
 
@@ -20,16 +21,52 @@ void input::update()
 		case SDL_MOUSEMOTION:
 			mouse::x_pos += evt.motion.xrel;
 			mouse::y_pos += evt.motion.yrel;
+
+			if(input::ctrl_method == input::method::MOUSE)
+			{
+				
+			}
+
 			break;
 		}
+	}
+
+	if (input::ctrl_method == input::method::CONTROLLER)
+	{
+		int16_t motion = SDL_JoystickGetAxis(joystick::joy, 2);
+		WORD offset = 5000;
+		int sensitivity = 1;
+		int16_t step = (1000 * sensitivity);
+
+		if (motion > offset)
+		{
+			camera -= step;
+		}
+		else if (motion < -offset)
+		{
+			camera += step;
+		}
+	}
+	else if (input::ctrl_method == input::method::MOUSE)
+	{
+		camera = -(WORD)std::ceil(input::mouse::x_pos * (MAXWORD / window::resolution_x));
 	}
 }
 
 void input::init()
 {
+	joystick::joy = SDL_JoystickOpen(0);
+	PRINT_DEBUG("Joystick: %s", SDL_JoystickName(joystick::joy));
+
 	mouse::x_pos = (int)std::floor(window::resolution_x / 2);
 	mouse::y_pos = (int)std::floor(window::resolution_y / 2);
 }
 
 int input::mouse::x_pos;
 int input::mouse::y_pos;
+
+SDL_Joystick* input::joystick::joy;
+
+WORD input::camera;
+
+input::method input::ctrl_method = input::method::KEYBOARD;

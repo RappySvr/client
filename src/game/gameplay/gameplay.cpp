@@ -4,6 +4,7 @@
 #include "../window/window.hpp"
 #include "../menus/menus.hpp"
 #include "../input/input.hpp"
+#include "../winapi/winapi.hpp"
 
 #include <utils/hook/hook.hpp>
 #include <utils/console/console.hpp>
@@ -17,34 +18,60 @@ void __fastcall sub_7C1160(DWORD* ecx, char* edx, int a1)
 	return sub_7C1160_(ecx, edx, a1);
 }
 
+bool release_once = false;
+bool grab_once = false;
+
 utils::function<void __fastcall(int, char*)> sub_4D7698_;
 void __fastcall sub_4D7698(int ecx, char* edx)
 {
 #ifndef DISABLE_SDL
-	//Check if window is focused and the menu isnt open in game
-	if (SDL_GetMouseFocus() == window::sdl_window && !*(bool*)(0x00A21CCC))
-	{
-		input::update();
+	input::update();
 
-		if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0)
+	if (GetFocus() == winapi::hwnd && SDL_GetMouseFocus() != window::sdl_window)
+	{
+		SDL_RaiseWindow(window::sdl_window);
+		SDL_SetWindowInputFocus(window::sdl_window);
+	}
+
+	//Check if window is focused and the menu isnt open in game and we have new control method
+	if (SDL_GetMouseFocus() == window::sdl_window && !*(bool*)(0x00A21CCC) && input::ctrl_method != input::method::KEYBOARD)
+	{
+		if (input::ctrl_method == input::method::MOUSE)
 		{
-			PRINT_ERROR("%s", SDL_GetError());
+			if (!grab_once)
+			{
+				if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0)
+				{
+					PRINT_ERROR("%s", SDL_GetError());
+				}
+
+				SDL_ShowCursor(SDL_DISABLE);
+				grab_once = true;
+				release_once = false;
+			}
+
+			SDL_SetWindowMouseGrab(window::sdl_window, SDL_TRUE);
 		}
 
-		ShowCursor(false);
 
-		WORD i = -(WORD)std::ceil(input::mouse::x_pos * (MAXWORD / window::resolution_x));
-		*(WORD*)(ecx + 48) = i;
+		*(WORD*)(ecx + 48) = input::camera;
 		//utils::hook::set(0x009ACE70, j);	//Camera angle/y
 	}
 	else if(*(bool*)(0x00A21CCC))
 	{
-		if (SDL_SetRelativeMouseMode(SDL_FALSE) != 0)
+		if (!release_once)
 		{
-			PRINT_ERROR("%s", SDL_GetError());
-		}
+			if (SDL_SetRelativeMouseMode(SDL_FALSE) != 0)
+			{
+				PRINT_ERROR("%s", SDL_GetError());
+			}
 
-		ShowCursor(true);
+			SDL_ShowCursor(SDL_ENABLE);
+			SDL_SetWindowMouseGrab(window::sdl_window, SDL_FALSE);
+			SDL_WarpMouseInWindow(window::sdl_window, (int)(window::resolution_x / 2), (int)(window::resolution_y / 2));
+			release_once = true;
+			grab_once = false;
+		}
 	}
 #endif
 
