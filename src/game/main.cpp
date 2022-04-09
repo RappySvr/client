@@ -14,6 +14,8 @@
 #include <utils/exception/exception.hpp>
 #include <utils/io/io.hpp>
 
+#include <shellapi.h>
+
 void __declspec(naked) start()
 {
 	//Not really sure how the start is with this unpacked exe
@@ -90,7 +92,37 @@ int __cdecl main(int argc, char* argv[])
 	utils::console::init();
 #else
 	ShowWindow(GetConsoleWindow(), HIDE_WINDOW);
+
+	std::vector<const char*> args;
+
+	for (auto i = 0; i < __argc; i++)
+	{
+		args.emplace_back(__argv[i]);
+	}
+
+
+	if (args.size() == 1)
+	{
+		MessageBoxA(nullptr, "Please launch Ketuana through the launcher only!", "Rappy.Live", 0);
+		ShellExecuteA(nullptr, "open", "Launcher.exe", 0, 0, 1);
+		exit(0);
+	}
+
+	for (auto i = 0; i < args.size(); i++)
+	{
+		if (i == 1)
+		{
+			if (strcmp(&args[1][0], "HFM1SlDN2gfV33kq"))
+			{
+				MessageBoxA(nullptr, "Please launch Ketuana through the launcher only!", "Rappy.Live", 0);
+				ShellExecuteA(nullptr, "open", "Launcher.exe", 0, 0, 1);
+				exit(0);
+			}
+		}
+	}
+
 #endif
+
 
 	load("psobb.exe");
 	patches();
