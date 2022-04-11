@@ -51,9 +51,6 @@ void patches()
 	utils::hook::set(0x00708321 + 0x1, IP_ADDR);
 	utils::hook::set(0x00708342 + 0x1, IP_ADDR);
 
-	event::update_song();
-	utils::hook::set(0x006F82F0 + 0x1, &event::song_name[0]);
-
 	//Teker Result fix
 	utils::hook::write(0x006D9F7B, { 0x68, 0x44, 0xC4, 0x96, 0x00 });
 	//Before:	push    offset unk_96C438
@@ -74,6 +71,7 @@ void client_init()
 		exit(0);
 	}
 #endif
+
 	utils::io::init();
 	settings::init();
 	window::init();
@@ -82,6 +80,12 @@ void client_init()
 	gameplay::init();
 	audio::init();
 	menus::init();
+
+	event::update_song();
+	if (utils::io::exists(event::song_name))
+	{
+		utils::hook::set(0x006F82F0 + 0x1, &event::song_name[0]);
+	}
 }
 
 int __cdecl main(int argc, char* argv[])
