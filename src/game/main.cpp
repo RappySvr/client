@@ -13,6 +13,7 @@
 #include <utils/console/console.hpp>
 #include <utils/exception/exception.hpp>
 #include <utils/io/io.hpp>
+#include <utils/format/format.hpp>
 
 #include <shellapi.h>
 
@@ -82,7 +83,7 @@ void client_init()
 	menus::init();
 
 	event::update_song();
-	if (utils::io::exists(event::song_name))
+	if (utils::io::exists(utils::format::va("data\\ogg\\%s", &event::song_name[0])))
 	{
 		utils::hook::set(0x006F82F0 + 0x1, &event::song_name[0]);
 	}
