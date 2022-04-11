@@ -40,13 +40,19 @@ int window::get_window_mode()
 void window::init()
 {
 	window::ratio = (settings::resolution.x / settings::resolution.y);
-	window::widescreen();
+
+	//If not 4x3 do widescreen
+	if (std::truncf(window::ratio) != _4_3)
+	{
+		window::widescreen();
+	}
 }
 
 void window::widescreen()
 {
 	window::ratio = settings::resolution.x / settings::resolution.y;
 
+	//Specific 16x9 edit till i do the math
 	if (std::truncf(window::ratio) == _16_9)
 	{
 		utils::hook::set(0x0070F757 + 0x3, 0.75f);
