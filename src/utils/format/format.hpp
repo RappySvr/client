@@ -17,6 +17,11 @@ namespace utils
 
 			static auto split(std::string string, const std::string& delimiter) -> std::vector<std::string>;
 
+			static bool cmpf(float A, float B, float epsilon = 0.005f)
+			{
+				return (fabs(A - B) < epsilon);
+			}
+
 			template<typename S> static auto stoi(const char* string, S d) -> S
 			{
 				char* end;

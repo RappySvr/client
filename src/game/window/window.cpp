@@ -1,13 +1,14 @@
 #include "../stdafx.hpp"
 #include "window.hpp"
 
+#include <utils/format/format.hpp>
 #include <utils/hook/hook.hpp>
 #include <utils/pattern/pattern.hpp>
 #include <utils/console/console.hpp>
 
-const float _4_3 = std::truncf(4.0f/3.0f);
-const float _16_9 = std::truncf(16.0f/9.0f);
-const float _16_10 = std::truncf(16.0f/10.0f);
+const float _4_3 = 4.0f/3.0f;
+const float _16_9 = 16.0f/9.0f;
+const float _16_10 = 16.0f/10.0f;
 
 float window::ratio = _4_3;
 
@@ -42,7 +43,7 @@ void window::init()
 	window::ratio = (settings::resolution.x / settings::resolution.y);
 
 	//If not 4x3 do widescreen
-	if (std::truncf(window::ratio) != _4_3)
+	if (!utils::format::cmpf(window::ratio, _4_3))
 	{
 		window::widescreen();
 	}
@@ -53,7 +54,7 @@ void window::widescreen()
 	window::ratio = settings::resolution.x / settings::resolution.y;
 
 	//Specific 16x9 edit till i do the math
-	if (std::truncf(window::ratio) == _16_9)
+	if (!utils::format::cmpf(window::ratio, _16_9))
 	{
 		utils::hook::set(0x0070F757 + 0x3, 0.75f);
 		utils::hook::set(0x0071093C + 0x3, 0.75f);
