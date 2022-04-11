@@ -6,7 +6,7 @@
 #include <utils/console/console.hpp>
 
 const float _4_3 = std::truncf(4.0f/3.0f);
-const float _16_9 = std::truncf(16.0f / 9.0f);
+const float _16_9 = std::truncf(16.0f/9.0f);
 const float _16_10 = std::truncf(16.0f/10.0f);
 
 float window::ratio = _4_3;
@@ -39,17 +39,15 @@ int window::get_window_mode()
 
 void window::init()
 {
-	window::ratio = std::truncf(settings::resolution.x / settings::resolution.y);
-
-	if (window::ratio != _4_3)
-	{
-		window::widescreen();
-	}
+	window::ratio = (settings::resolution.x / settings::resolution.y);
+	window::widescreen();
 }
 
 void window::widescreen()
 {
-	if (window::ratio == _16_9)
+	window::ratio = settings::resolution.x / settings::resolution.y;
+
+	if (std::truncf(window::ratio) == _16_9)
 	{
 		utils::hook::set(0x0070F757 + 0x3, 0.75f);
 		utils::hook::set(0x0071093C + 0x3, 0.75f);
@@ -69,47 +67,47 @@ void window::widescreen()
 	//X
 	auto pattern_x = hook::pattern("00 00 20 44");
 	pattern_x.for_each_result([&num](hook::pattern_match i)
-	{
-		if (num != 6 && num != 7)
 		{
-			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.x);
-			*(float*)(i.get<std::uint32_t>()) = settings::resolution.x;
-		}
-		num++;
-	});
+			if (num != 6 && num != 7)
+			{
+				PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.x);
+				*(float*)(i.get<std::uint32_t>()) = settings::resolution.x;
+			}
+			num++;
+		});
 
 	auto pattern_x_1 = hook::pattern("00 C0 1F 44");
 	pattern_x_1.for_each_result([](hook::pattern_match i)
-	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.x);
-		*(float*)(i.get<std::uint32_t>()) = settings::resolution.x;
-	});
+		{
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.x);
+			*(float*)(i.get<std::uint32_t>()) = settings::resolution.x;
+		});
 
 	//Y
 	num = 0;
 	auto pattern_y = hook::pattern("00 00 F0 43");
 	pattern_y.for_each_result([&num](hook::pattern_match i)
-	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y);
-		*(float*)(i.get<std::uint32_t>()) = settings::resolution.y;
-		num++;
-	});
+		{
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y);
+			*(float*)(i.get<std::uint32_t>()) = settings::resolution.y;
+			num++;
+		});
 
 	//Y
 	auto pattern_y_1 = hook::pattern("00 80 EF 43");
 	pattern_y_1.for_each_result([](hook::pattern_match i)
-	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y);
-		*(float*)(i.get<std::uint32_t>()) = settings::resolution.y;
-	});
+		{
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y);
+			*(float*)(i.get<std::uint32_t>()) = settings::resolution.y;
+		});
 
 	//Ratio
 	auto pattern_r = hook::pattern("AB AA AA 3F");
 	pattern_r.for_each_result([](hook::pattern_match i)
-	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::ratio);
-		*(float*)(i.get<std::uint32_t>()) = window::ratio;
-	});
+		{
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), window::ratio);
+			*(float*)(i.get<std::uint32_t>()) = window::ratio;
+		});
 
 	/*
 	4:3 = 450 100
@@ -119,69 +117,69 @@ void window::widescreen()
 
 	auto pattern_unk_0 = hook::pattern("00 00 E1 43");
 	pattern_unk_0.for_each_result([](hook::pattern_match i)
-	{
-		float number = 450.0f;
-		if (window::ratio == _16_9 || window::ratio == _16_10)
 		{
-			number = 770.0f;
-		}
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), number);
-		*(float*)(i.get<std::uint32_t>()) = number;
-	});
+			float number = 450.0f;
+			if (window::ratio == _16_9 || window::ratio == _16_10)
+			{
+				number = 770.0f;
+			}
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), number);
+			*(float*)(i.get<std::uint32_t>()) = number;
+		});
 
 	auto pattern_unk_1 = hook::pattern("00 00 C8 42");
 	pattern_unk_0.for_each_result([](hook::pattern_match i)
-	{
-		float number = 100.0f;
-		if (window::ratio == _16_9)
 		{
-			number = 220.0f;
-		}
-		else if(window::ratio == _16_10)
-		{
-			number = 260.0f;
-		}
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), number);
-		*(float*)(i.get<std::uint32_t>()) = number;
-	});
+			float number = 100.0f;
+			if (window::ratio == _16_9)
+			{
+				number = 220.0f;
+			}
+			else if (window::ratio == _16_10)
+			{
+				number = 260.0f;
+			}
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), number);
+			*(float*)(i.get<std::uint32_t>()) = number;
+		});
 
 	auto pattern_height_minus_170 = hook::pattern("00 00 9B 43");
 	pattern_height_minus_170.for_each_result([](hook::pattern_match i)
-	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 170.0f);
-		*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 170.0f;
-	});
+		{
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 170.0f);
+			*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 170.0f;
+		});
 
 	auto pattern_height_minus_190 = hook::pattern("00 00 91 43");
 	pattern_height_minus_190.for_each_result([](hook::pattern_match i)
-	{
-		PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 190.0f);
-		*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 190.0f;
-	});
+		{
+			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 190.0f);
+			*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 190.0f;
+		});
 
 	num = 0;
 	auto pattern_height_minus_50 = hook::pattern("00 00 D7 43");
 	pattern_height_minus_50.for_each_result([&num](hook::pattern_match i)
-	{
-		if (num == 1 || num == 6)
 		{
-			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 50.0f);
-			*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 50.0f;
-		}
-		num++;
-	});
+			if (num == 1 || num == 6)
+			{
+				PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 50.0f);
+				*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 50.0f;
+			}
+			num++;
+		});
 
 	num = 0;
 	auto pattern_height_minus_149 = hook::pattern("00 80 A5 43");
 	pattern_height_minus_149.for_each_result([&num](hook::pattern_match i)
-	{
-		if(num == 0)
 		{
-			PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 149.0f);
-			*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 149.0f;
-		}
-		num++;
-	});
+			if (num == 0)
+			{
+				PRINT_DEBUG_N("0x%p : %f -> %f", i.get<std::uint32_t>(), *(float*)(i.get<std::uint32_t>()), settings::resolution.y - 149.0f);
+				*(float*)(i.get<std::uint32_t>()) = settings::resolution.y - 149.0f;
+			}
+			num++;
+		});
 
 	pattern_x.clear();
 	pattern_x_1.clear();

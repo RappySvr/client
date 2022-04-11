@@ -5,6 +5,7 @@
 #include <utils/io/io.hpp>
 #include <utils/ini/IniReader.h>
 #include <utils/hook/hook.hpp>
+#include <utils/console/console.hpp>
 
 
 void settings::init()
@@ -13,23 +14,12 @@ void settings::init()
 	{
 		settings::create();
 	}
+
+	settings::load_ini();
 }
 
-void settings::load()
+void settings::load_ini()
 {
-	*(DWORD*)&*(DWORD*)(0x00A46C48) = 0;
-	*((DWORD*)&*(DWORD*)(0x00A46C48) + 1) = 0;
-	*((DWORD*)&*(DWORD*)(0x00A46C48) + 2) = 0;
-	*((DWORD*)&*(DWORD*)(0x00A46C48) + 3) = 0;
-	*((DWORD*)&*(DWORD*)(0x00A46C48) + 4) = 0;
-	*((DWORD*)&*(DWORD*)(0x00A46C48) + 5) = 0;
-	*((DWORD*)&*(DWORD*)(0x00A46C48) + 6) = 0;
-	*((DWORD*)&*(DWORD*)(0x00A46C48) + 7) = 0;
-	*((DWORD*)&*(DWORD*)(0x00A46C48) + 8) = 0;
-	*((DWORD*)&*(DWORD*)(0x00A46C48) + 9) = 0;
-	*((DWORD*)&*(DWORD*)(0x00A46C48) + 10) = 0;
-	*(&*(DWORD*)(0x00A46C48) + 22) = 0;
-
 	CIniReader config("rappylive/psobb.ini");
 
 	const char* method = config.ReadString("controls", "method", "Keyboard");
@@ -50,9 +40,26 @@ void settings::load()
 	settings::sensitivity = config.ReadFloat("graphics", "controls", 1.0f);
 
 	settings::fullscreen = config.ReadBoolean("graphics", "fullscreen", false);
-	settings::resolution.x = config.ReadInteger("graphics", "width", 800);
-	settings::resolution.y = config.ReadInteger("graphics", "height", 600);
+	settings::resolution.x = config.ReadFloat("graphics", "width", 800.0f);
+	settings::resolution.y = config.ReadFloat("graphics", "height", 600.0f);
+
 	settings::bpp = config.ReadInteger("graphics", "bpp", 32);
+}
+
+void settings::load()
+{
+	*(DWORD*)&*(DWORD*)(0x00A46C48) = 0;
+	*((DWORD*)&*(DWORD*)(0x00A46C48) + 1) = 0;
+	*((DWORD*)&*(DWORD*)(0x00A46C48) + 2) = 0;
+	*((DWORD*)&*(DWORD*)(0x00A46C48) + 3) = 0;
+	*((DWORD*)&*(DWORD*)(0x00A46C48) + 4) = 0;
+	*((DWORD*)&*(DWORD*)(0x00A46C48) + 5) = 0;
+	*((DWORD*)&*(DWORD*)(0x00A46C48) + 6) = 0;
+	*((DWORD*)&*(DWORD*)(0x00A46C48) + 7) = 0;
+	*((DWORD*)&*(DWORD*)(0x00A46C48) + 8) = 0;
+	*((DWORD*)&*(DWORD*)(0x00A46C48) + 9) = 0;
+	*((DWORD*)&*(DWORD*)(0x00A46C48) + 10) = 0;
+	*(&*(DWORD*)(0x00A46C48) + 22) = 0;
 
 	//set settings
 	utils::hook::set(0x00A46C48, settings::resolution.x);
@@ -83,13 +90,13 @@ void settings::create()
 	config.WriteString("controls", "method", "Keyboard");
 	config.WriteFloat("controls", "sensitivity", 1.0);
 
-	config.WriteBoolean("graphics", "fullscreen", true);
+	config.WriteBoolean("graphics", "fullscreen", false);
 	config.WriteInteger("graphics", "width", 800);
 	config.WriteInteger("graphics", "height", 600);
 	config.WriteInteger("graphics", "bpp", 32);
 }
 
-settings::vector2 settings::resolution{ 800, 600 };
+settings::vector2 settings::resolution{ 800.0f, 600.0f };
 bool settings::fullscreen = false;
 float settings::sensitivity = 1.0f;
 int settings::bpp = 32;
