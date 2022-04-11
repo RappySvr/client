@@ -54,7 +54,7 @@ void window::widescreen()
 	window::ratio = settings::resolution.x / settings::resolution.y;
 
 	//Specific 16x9 edit till i do the math
-	if (!utils::format::cmpf(window::ratio, _16_9))
+	if (utils::format::cmpf(window::ratio, _16_9))
 	{
 		utils::hook::set(0x0070F757 + 0x3, 0.75f);
 		utils::hook::set(0x0071093C + 0x3, 0.75f);

@@ -8,6 +8,15 @@ public:
 		float x, y;
 	};
 
+	static enum class language : int
+	{
+		JAPANESE,
+		ENGLISH,
+		GERMAN,
+		FRENCH,
+		SPANISH,
+	};
+
 	static void init();
 	static void load();
 	static void load_ini();
@@ -16,6 +25,7 @@ public:
 	static int bpp;
 	static bool fullscreen;
 	static float sensitivity;
+	static language lang;
 
 private:
 	static void create();

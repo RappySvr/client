@@ -22,6 +22,29 @@ void settings::load_ini()
 {
 	CIniReader config("rappylive/psobb.ini");
 
+	const char* language = config.ReadString("general", "language", "English");
+	if (!strcmp(language, "English"))
+	{
+		settings::lang = settings::language::ENGLISH;
+	}
+	else if (!strcmp(language, "Japanese"))
+	{
+		settings::lang = settings::language::JAPANESE;
+	}
+	else if (!strcmp(language, "French"))
+	{
+		settings::lang = settings::language::FRENCH;
+	}
+	else if (!strcmp(language, "Spanish"))
+	{
+		settings::lang = settings::language::SPANISH;
+	}
+	else if (!strcmp(language, "German"))
+	{
+		settings::lang = settings::language::GERMAN;
+	}
+
+
 	const char* method = config.ReadString("controls", "method", "Keyboard");
 
 	if (!strcmp(method, "Keybaord"))
@@ -66,6 +89,8 @@ void settings::load()
 	utils::hook::set(0x00A46C4A, settings::resolution.x);
 	utils::hook::set(0x00A46C72, !settings::fullscreen);
 	utils::hook::set(0x00A46C4C, settings::bpp);
+	utils::hook::set(0x00A9CD44, settings::lang);
+	utils::hook::return_value(0x00793228, settings::lang);
 
 	//unk
 	utils::hook::set(0x00A46C4E, 2);
@@ -87,6 +112,8 @@ void settings::create()
 {
 	CIniReader config("rappylive/psobb.ini");
 
+	config.WriteString("general", "language", "English");
+
 	config.WriteString("controls", "method", "Keyboard");
 	config.WriteFloat("controls", "sensitivity", 1.0);
 
@@ -100,3 +127,4 @@ settings::vector2 settings::resolution{ 800.0f, 600.0f };
 bool settings::fullscreen = false;
 float settings::sensitivity = 1.0f;
 int settings::bpp = 32;
+settings::language settings::lang = settings::language::ENGLISH;
