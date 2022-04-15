@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <thread>
+
+using namespace std::literals;
 
 #include <Windows.h>
 #include <wchar.h>
@@ -10,4 +13,4 @@
 #include "version.hpp"
 
 
-#define IP_ADDR "45.85.194.188"
+#define WEB_URL "45.85.194.188"

@@ -60,7 +60,7 @@ void settings::load_ini()
 		input::ctrl_method = input::method::CONTROLLER;
 	}
 
-	settings::sensitivity = config.ReadFloat("graphics", "controls", 1.0f);
+	settings::sensitivity = config.ReadFloat("controls", "sensitivity", 1.0f);
 
 	settings::fullscreen = config.ReadBoolean("graphics", "fullscreen", false);
 	settings::resolution.x = config.ReadFloat("graphics", "width", 800.0f);
@@ -87,7 +87,7 @@ void settings::load()
 	//set settings
 	utils::hook::set(0x00A46C48, settings::resolution.x);
 	utils::hook::set(0x00A46C4A, settings::resolution.x);
-	utils::hook::set(0x00A46C72, !settings::fullscreen);
+	utils::hook::set(0x00A46C72, true);
 	utils::hook::set(0x00A46C4C, settings::bpp);
 	utils::hook::set(0x00A9CD44, settings::lang);
 	utils::hook::return_value(0x00793228, settings::lang);
