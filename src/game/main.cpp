@@ -39,30 +39,6 @@ void replace_funcs()
 	replace_func(0x00482EAC, (uint32_t)settings::load);
 }
 
-void patches()
-{
-	utils::hook::set(0x007085E5 + 0x1, IP_ADDR);
-	utils::hook::set(0x00708618 + 0x1, IP_ADDR);
-	utils::hook::set(0x007085EB + 0x1, IP_ADDR);
-	utils::hook::set(0x007082F1 + 0x1, IP_ADDR);
-	utils::hook::set(0x0070833C + 0x1, IP_ADDR);
-	utils::hook::set(0x007082F7 + 0x1, IP_ADDR);
-	utils::hook::set(0x007085FD + 0x1, IP_ADDR);
-	utils::hook::set(0x0070861E + 0x1, IP_ADDR);
-	utils::hook::set(0x00708321 + 0x1, IP_ADDR);
-	utils::hook::set(0x00708342 + 0x1, IP_ADDR);
-
-	//Teker Result fix
-	utils::hook::write(0x006D9F7B, { 0x68, 0x44, 0xC4, 0x96, 0x00 });
-	//Before:	push    offset unk_96C438
-	//After:	push    offset unk_96C444
-
-	//Image board patch
-	utils::hook::write(0x006713A9, { 0x0F, 0x8C, 0x23, 0x01, 0x00, 0x00 });
-	//Before:	jle     loc_6714D2
-	//After:	jl		loc_6714D2
-}
-
 void client_init()
 {
 #ifndef DISABLE_SDL
@@ -71,6 +47,8 @@ void client_init()
 		MessageBoxA(nullptr, "Failed to init SDL2", "Rappy.Live", 0);
 		exit(0);
 	}
+
+	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "0");
 #endif
 
 	utils::io::init();
@@ -81,6 +59,53 @@ void client_init()
 	gameplay::init();
 	audio::init();
 	menus::init();
+	network::init();
+
+	utils::hook::set(0x007085E5 + 0x1, network::ip);
+	utils::hook::set(0x00708618 + 0x1, network::ip);
+	utils::hook::set(0x007085EB + 0x1, network::ip);
+	utils::hook::set(0x007082F1 + 0x1, network::ip);
+	utils::hook::set(0x0070833C + 0x1, network::ip);
+	utils::hook::set(0x007082F7 + 0x1, network::ip);
+	utils::hook::set(0x007085FD + 0x1, network::ip);
+	utils::hook::set(0x0070861E + 0x1, network::ip);
+	utils::hook::set(0x00708321 + 0x1, network::ip);
+	utils::hook::set(0x00708342 + 0x1, network::ip);
+
+	//Teker Result fix
+	utils::hook::write(0x006D9F7B, { 0x68, 0x44, 0xC4, 0x96, 0x00 });
+	//Before:	push    offset unk_96C438
+	//After:	push    offset unk_96C444
+
+	//Image board patch
+	utils::hook::write(0x006713A9, { 0x0F, 0x8C, 0x23, 0x01, 0x00, 0x00 });
+	//Before:	jle     loc_6714D2
+	//After:	jl		loc_6714D2
+
+	//Startup menus
+	//1 = boot up
+	//2 = title
+	//3 = credits
+	//4 = options
+	//5 = dressing room
+	//6 = lobby join (crash without character data)
+	//7 = nothing
+	//8 = ending
+	//9 = weird memory card error
+	//10 = join lobby and then memory card error
+	//11 = lobby join (crash without character data)
+	//12 = ending
+	//13 = weird memory card error
+	//14 = freeze
+	//15 = ???
+	//16 = gamecube menu
+	//17 = blank menu
+	//18 = credits (close on input)
+	//19 = freeze
+	//20 = freeze
+	//21 = black
+	//22 = hard crash
+	//23 = hard crash (cont...)
 
 	event::update_song();
 	if (utils::io::exists(utils::format::va("data\\ogg\\%s", &event::song_name[0])))
@@ -108,7 +133,7 @@ int __cdecl main(int argc, char* argv[])
 
 	if (args.size() == 1)
 	{
-		MessageBoxA(nullptr, "Please launch Ketuana through the launcher only!", "Rappy.Live", 0);
+		MessageBoxA(nullptr, "Please launch Rappy.Live through the launcher only!", "Rappy.Live", 0);
 		ShellExecuteA(nullptr, "open", "Launcher.exe", 0, 0, 1);
 		exit(0);
 	}
@@ -119,7 +144,7 @@ int __cdecl main(int argc, char* argv[])
 		{
 			if (strcmp(&args[1][0], "HFM1SlDN2gfV33kq"))
 			{
-				MessageBoxA(nullptr, "Please launch Ketuana through the launcher only!", "Rappy.Live", 0);
+				MessageBoxA(nullptr, "Please launch Rappy.Live through the launcher only!", "Rappy.Live", 0);
 				ShellExecuteA(nullptr, "open", "Launcher.exe", 0, 0, 1);
 				exit(0);
 			}
@@ -128,9 +153,7 @@ int __cdecl main(int argc, char* argv[])
 
 #endif
 
-
 	load("psobb.exe");
-	patches();
 	replace_funcs();
 	client_init();
 	return entry_point(0x00B60000);
