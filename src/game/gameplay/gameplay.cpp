@@ -12,6 +12,14 @@
 
 #include <intrin.h>
 
+float angle = 0.0f;
+
+utils::function<WORD __cdecl(__int16, int, int)> cam_damp_;
+WORD __cdecl cam_damp(__int16 a1, int a2, int a3)
+{
+	return input::camera;
+}
+
 utils::function<void __fastcall(DWORD*, char*, int)> sub_7C1160_;
 void __fastcall sub_7C1160(DWORD* ecx, char* edx, int a1)
 {
@@ -25,53 +33,33 @@ utils::function<void __fastcall(int, char*)> sub_4D7698_;
 void __fastcall sub_4D7698(int ecx, char* edx)
 {
 #ifndef DISABLE_SDL
+	//All ecx + x
+	//Notes:
+	// Center = 268
+	// Rotation = 48
+	// Angle = 19
+
 	input::update();
-
-	if (GetFocus() == winapi::hwnd && SDL_GetMouseFocus() != window::sdl_window)
+	//PRINT_INFO("0x%p", ecx);
+	switch (input::ctrl_method)
 	{
-		SDL_RaiseWindow(window::sdl_window);
-		SDL_SetWindowInputFocus(window::sdl_window);
-	}
-
-	//Check if window is focused and the menu isnt open in game and we have new control method
-	if (SDL_GetMouseFocus() == window::sdl_window && !*(bool*)(0x00A21CCC) && input::ctrl_method != input::method::KEYBOARD)
-	{
-		if (input::ctrl_method == input::method::MOUSE)
+		case input::method::CONTROLLER:
 		{
-			if (!grab_once)
-			{
-				if (SDL_SetRelativeMouseMode(SDL_TRUE) != 0)
-				{
-					PRINT_ERROR("%s", SDL_GetError());
-				}
+			*(WORD*)(ecx + 48) = input::camera;
+		}
+		break;
 
+		case input::method::MOUSE:
+		{
+			if (GetFocus() == winapi::hwnd)
+			{
 				SDL_ShowCursor(SDL_DISABLE);
-				grab_once = true;
-				release_once = false;
+				ShowCursor(false);
+				SDL_WarpMouseInWindow(window::sdl_window, (settings::resolution.x / 2), (settings::resolution.y / 2));
+				*(WORD*)(ecx + 48) = input::camera;
 			}
-
-			SDL_SetWindowMouseGrab(window::sdl_window, SDL_TRUE);
 		}
-
-
-		*(WORD*)(ecx + 48) = input::camera;
-		//utils::hook::set(0x009ACE70, j);	//Camera angle/y
-	}
-	else if(*(bool*)(0x00A21CCC))
-	{
-		if (!release_once)
-		{
-			if (SDL_SetRelativeMouseMode(SDL_FALSE) != 0)
-			{
-				PRINT_ERROR("%s", SDL_GetError());
-			}
-
-			SDL_ShowCursor(SDL_ENABLE);
-			SDL_SetWindowMouseGrab(window::sdl_window, SDL_FALSE);
-			SDL_WarpMouseInWindow(window::sdl_window, (int)(settings::resolution.x / 2), (int)(settings::resolution.y / 2));
-			release_once = true;
-			grab_once = false;
-		}
+		break;
 	}
 #endif
 
@@ -112,6 +100,7 @@ void gameplay::init()
 	sub_4D7698_ = utils::hook::detour(0x004D7698, sub_4D7698, 5);
 	sub_7C1160_ = utils::hook::detour(0x007C1160, sub_7C1160, 7);
 	sub_6698E0_ = utils::hook::detour(0x006698E0, sub_6698E0, 11);
+	//cam_damp_ = utils::hook::detour(0x004D6370, cam_damp, 6);
 
 	debug_print_screen_ = utils::hook::detour(0x0061CDB0, debug_print_screen, 1);
 

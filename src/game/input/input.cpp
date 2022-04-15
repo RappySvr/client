@@ -28,27 +28,23 @@ void input::update()
 
 	switch (input::ctrl_method)
 	{
-	case input::method::CONTROLLER:
+		case input::method::CONTROLLER:
 		{
 			int16_t motion = SDL_JoystickGetAxis(joystick::joy, 2);
-			WORD offset = 5000;
-			int sensitivity = 1;
-			int16_t step = (1000 * sensitivity);
+			WORD deadzone = 5000;
+			float sensitivity = settings::sensitivity;
+			int16_t step = (int16_t)std::ceil((1000 * sensitivity) * (motion / 32767.0f));
 
-			if (motion > offset)
+			if (motion > deadzone || motion < -deadzone)
 			{
-				camera -= step;
-			}
-			else if (motion < -offset)
-			{
-				camera += step;
+				input::camera += step;
 			}
 		}
 		break;
 
-	case input::method::MOUSE:
+		case input::method::MOUSE:
 		{
-			camera = -(WORD)std::ceil(input::mouse::x_pos * (MAXWORD / settings::resolution.x));
+			input::camera = -(WORD)std::ceil(input::mouse::x_pos * (20 * settings::sensitivity));
 		}
 		break;
 	}
