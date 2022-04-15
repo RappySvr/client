@@ -10,12 +10,21 @@ HWND __stdcall create_window_ex_a(DWORD dwExStyle, LPCSTR lpClassName, LPCSTR lp
 	int X, int Y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)
 {
 	//Allow minimize and close
-	if (*(int*)(0x00A46C72) == 1)
+	if (!settings::fullscreen)
 	{
 		dwStyle = WS_SYSMENU | WS_MINIMIZEBOX;
 	}
+	else if (settings::fullscreen)
+	{
+		dwStyle = WS_POPUP;
+	}
 
-	winapi::hwnd = CreateWindowExA(dwExStyle, lpClassName, lpWindowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
+	auto rect = ::RECT();
+	GetClientRect(GetDesktopWindow(), &rect);
+	rect.left = (rect.right / 2) - (settings::resolution.x / 2);
+	rect.top = (rect.bottom / 2) - (settings::resolution.y / 2);
+
+	winapi::hwnd = CreateWindowExA(dwExStyle, lpClassName, lpWindowName, dwStyle, rect.left, rect.top, settings::resolution.x, settings::resolution.y, hWndParent, hMenu, hInstance, lpParam);
 
 #ifndef DISABLE_SDL
 	window::sdl_window = SDL_CreateWindowFrom(winapi::hwnd);
@@ -66,7 +75,7 @@ BOOL __stdcall create_directory_a(LPCSTR lpPathName, LPSECURITY_ATTRIBUTES lpSec
 
 int __stdcall show_cursor(bool show)
 {
-	return ShowCursor(show);
+	return ShowCursor(false);
 }
 
 void __fastcall output_debug_string(LPCSTR ecx, char* edx)
